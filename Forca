@@ -7,7 +7,7 @@ import string
 jigsaw = '''
 Hello, Let's play a game
    
-  ಠ  ಠ
+  ಠ  ಠ  
 ( @ L @ )
    ►◄
 '''
@@ -54,11 +54,11 @@ forca_bonequinho =['''
  |   O
  |  /|\\
  |  / \\
-=== ♫ I'm waiting in my cold cell, when the bell begins to chime.
-Reflecting on my past life and it doesn't have much time.
-'Cause at 5 o'clock they take me to the gallows pole.
-The sands of time for me are running low.
-Running low... ♪ ''',
+=== ♫ I'm waiting in my cold cell, when the bell begins to chime ♪
+♪ Reflecting on my past life and it doesn't have much time ♫
+♪ Cause at 5 o'clock they take me to the gallows pole ♪
+♫ The sands of time for me are running low ♫
+♫ Running low... ♪ ''',
 ]
 
 
@@ -98,15 +98,16 @@ def display_board(missed_letters, correct_letters, secret_word):
 
     blanks = "_" * len(secret_word)
 
-    for i in range(len(secret_word)): #replace blanks with correctly guessed letters
+    for i in range(len(secret_word)): # substitui os tracos pelas letras acertadas
         if secret_word[i] in correct_letters:
             blanks = blanks[:i] + secret_word[i] + blanks[i+1:]
-    for letter in blanks: # show the secret word with spaces in between each letter
+    for letter in blanks: # mostra a palavra secreta com espacos entre as letras
         print(letter, end=" ")
     print()
 
 def get_guess(already_guessed):
-    # returns the letter the player entered. This function makes sure the player entered a single letter only
+    ''' Retorna a letra que o jogador escolheu e garante que apenas uma letra por vez eh escolhida '''
+
     while True:
         guess = input("Guess a letter ").lower()
         if len(guess) != 1:
@@ -121,8 +122,8 @@ def get_guess(already_guessed):
 
 def play_again():
     # This function return True if the player wants to play again
-    print("Do you want to play again? (yes or no)")
-    response = input().lower().startswith("y")
+    print("Voce quer jogar novamente? (sim ou nao)")
+    response = input().lower().startswith("s")
     return response
 
 
@@ -152,7 +153,7 @@ def play_hangman():
                     found_all_letters = False
                     break
             if found_all_letters:
-                print(f"YAY! the secret word is {secret_word}")
+                print(f"Parabens! A palavra secreta era {secret_word}")
                 gameisdone = True
         else:
             missed_letters = missed_letters + guess
@@ -160,10 +161,10 @@ def play_hangman():
             # check if player has guessed too many times and lost
             if len(missed_letters) == len(forca_bonequinho) - 1:
                 display_board(missed_letters, correct_letters, secret_word)
-                print(f"You have run out of guesses :( \n After {str(len(missed_letters))} missed guesses and {str(len(correct_letters))} correct guesses, the word was {secret_word}")
+                print(f"Voce nao tem mais tentativas :( \nDepois de {str(len(missed_letters))} erros e {str(len(correct_letters))} acertos, a palavra era {secret_word}")
                 gameisdone = True
 
-        # Ask the player wants to play again (but only if the game is done)
+        # Pergunta ao jogador se ele deseja jogar novamente
         if gameisdone:
             if play_again():
                 missed_letters = ""
