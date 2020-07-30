@@ -1,0 +1,179 @@
+# banco de palavaras https://www.ime.usp.br/~pf/dicios/index.html
+
+import random
+import string
+
+
+jigsaw = '''
+Hello, Let's play a game
+   
+  ಠ  ಠ
+( @ L @ )
+   ►◄
+'''
+
+forca_bonequinho =['''
+ +---+
+ |
+ |
+ |
+===''', '''
+ +---+
+ |   O
+ |
+ |
+===''','''
+ +---+
+ |   O
+ |   |
+ |
+===''', '''
+ +---+
+ |   O
+ |  /|
+ |
+===''', '''
+ +---+
+ |   O
+ |  /|\\
+ |
+===''', '''
+ +---+
+ |   O
+ |  /|\\
+ |  /
+===''', '''
+ +---+
+ |   O
+ |  /|\\
+ |  / \\
+===''', '''
+ +---+
+ |   |
+ |   | 
+ |   O
+ |  /|\\
+ |  / \\
+=== ♫ I'm waiting in my cold cell, when the bell begins to chime.
+Reflecting on my past life and it doesn't have much time.
+'Cause at 5 o'clock they take me to the gallows pole.
+The sands of time for me are running low.
+Running low... ♪ ''',
+]
+
+
+def get_num_min():
+    """ Obtem input do usuario para numero minimo de letras"""
+    while True:
+        num_min = input("Quantas letras no minimo, voce quer?(4-15) ")
+        try:
+            num_min_lenght = int(num_min)
+            if num_min_lenght >= 4 and num_min_lenght <= 15:
+                return num_min_lenght
+            else:
+                print("Por favor escolha um numero entre 4 e 15 ")
+        except ValueError:
+            print("Por favor informe um numero ")
+
+def get_palavra_aleat(num_min_lenght):
+    """ Obtem palavra aleatoria da lista"""
+    palavras = []
+    lista_palavras = "br-sem-acentos.txt"
+    with open(lista_palavras) as f:
+        for palavra in f:
+            palavra.strip().lower()
+            if len(palavra) >= num_min_lenght:
+                palavras.append(palavra)
+    palavra_aleat = random.choice(palavras).strip()
+    return palavra_aleat
+
+
+def display_board(missed_letters, correct_letters, secret_word):
+    print(forca_bonequinho[len(missed_letters)])
+    print()
+    print('Missed letters:', end=" ")
+    for letter in missed_letters:
+        print(letter, end= " ")
+    print()
+
+    blanks = "_" * len(secret_word)
+
+    for i in range(len(secret_word)): #replace blanks with correctly guessed letters
+        if secret_word[i] in correct_letters:
+            blanks = blanks[:i] + secret_word[i] + blanks[i+1:]
+    for letter in blanks: # show the secret word with spaces in between each letter
+        print(letter, end=" ")
+    print()
+
+def get_guess(already_guessed):
+    # returns the letter the player entered. This function makes sure the player entered a single letter only
+    while True:
+        guess = input("Guess a letter ").lower()
+        if len(guess) != 1:
+            print("Please enter a single letter")
+        elif guess in already_guessed:
+            print("You have already guessed that letter. Choose again")
+        elif guess not in string.ascii_lowercase:
+            print("Please enter a letter")
+        else:
+            return guess
+
+
+def play_again():
+    # This function return True if the player wants to play again
+    print("Do you want to play again? (yes or no)")
+    response = input().lower().startswith("y")
+    return response
+
+
+missed_letters = ""
+correct_letters = ""
+secret_word = get_palavra_aleat(num_min_lenght=10)
+gameisdone = False
+
+def play_hangman():
+    print(jigsaw)
+    min_lenght = get_num_min()
+    secret_word = get_palavra_aleat(min_lenght)
+    missed_letters = ""
+    correct_letters = ""
+    gameisdone = False
+    print(secret_word)
+    while True:
+        display_board(missed_letters, correct_letters, secret_word)
+        todas_letras = missed_letters + correct_letters
+
+        guess = get_guess(todas_letras)
+        if guess in secret_word:
+            correct_letters = correct_letters + guess
+            found_all_letters = True
+            for i in range(len(secret_word)):
+                if secret_word[i] not in correct_letters:
+                    found_all_letters = False
+                    break
+            if found_all_letters:
+                print(f"YAY! the secret word is {secret_word}")
+                gameisdone = True
+        else:
+            missed_letters = missed_letters + guess
+
+            # check if player has guessed too many times and lost
+            if len(missed_letters) == len(forca_bonequinho) - 1:
+                display_board(missed_letters, correct_letters, secret_word)
+                print(f"You have run out of guesses :( \n After {str(len(missed_letters))} missed guesses and {str(len(correct_letters))} correct guesses, the word was {secret_word}")
+                gameisdone = True
+
+        # Ask the player wants to play again (but only if the game is done)
+        if gameisdone:
+            if play_again():
+                missed_letters = ""
+                correct_letters = ""
+                gameisdone = False
+                min_lenght = get_num_min()
+                secret_word = get_palavra_aleat(min_lenght)
+            else:
+                print("Fim de jogo")
+                break
+
+
+play_hangman()
