@@ -139,7 +139,7 @@ def play_hangman():
     missed_letters = ""
     correct_letters = ""
     gameisdone = False
-    print(secret_word)
+
     while True:
         display_board(missed_letters, correct_letters, secret_word)
         todas_letras = missed_letters + correct_letters
